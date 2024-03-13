@@ -5,7 +5,6 @@
 #include "MemoryAccess.h"
 
 
-
 void MemoryAccess::printAlbums() 
 {
 	if(m_albums.empty()) {
