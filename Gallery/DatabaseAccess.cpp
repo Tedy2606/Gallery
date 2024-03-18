@@ -32,11 +32,10 @@ void DatabaseAccess::clear()
 
 void DatabaseAccess::deleteAlbum(const std::string& albumName, int userId)
 {
-	const char* sqlStatement;
+
 	char* errMessage = nullptr;
 	std::string sqlQuery = "DELETE FROM ALBUMS WHERE NAME LIKE '" + albumName + "' AND USER_ID = " + std::to_string(userId) + ";";
-	sqlStatement = sqlQuery.c_str();
-	int res = sqlite3_exec(db, sqlStatement, nullptr, nullptr, &errMessage);
+	int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK) {
 		std::cout << "Error: " << errMessage << std::endl;
 		sqlite3_free(errMessage); // Free error message
@@ -54,11 +53,10 @@ void DatabaseAccess::closeAlbum(Album& pAlbum)
 void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId)
 {
 	int picId = getPicIdFromAlbumAndPicName(albumName, pictureName, userId);
-	const char* sqlStatement;
+
 	char* errMessage = nullptr;
 	std::string sqlQuery = "INSERT INTO TAGS VALUES (" + std::to_string(picId) + "," + std::to_string(userId) + ");";
-	sqlStatement = sqlQuery.c_str();
-	int res = sqlite3_exec(db, sqlStatement, nullptr, nullptr, &errMessage);
+	int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK) {
 		std::cout << "Error: " << errMessage << std::endl;
 		sqlite3_free(errMessage); // Free error message
@@ -71,11 +69,10 @@ void DatabaseAccess::untagUserInPicture(const std::string& albumName, const std:
 {
 
 	int picId = getPicIdFromAlbumAndPicName(albumName, pictureName, userId);
-	const char* sqlStatement;
+	
 	char* errMessage = nullptr;
 	std::string sqlQuery = "REMOVE FROM TAGS WHERE " + std::to_string(picId) + "= PICTURE_ID AND" + std::to_string(userId) + "= USER_ID;";
-	sqlStatement = sqlQuery.c_str();
-	int res = sqlite3_exec(db, sqlStatement, nullptr, nullptr, &errMessage);
+	int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK) {
 		std::cout << "Error: " << errMessage << std::endl;
 		sqlite3_free(errMessage); // Free error message
@@ -88,11 +85,10 @@ void DatabaseAccess::untagUserInPicture(const std::string& albumName, const std:
 
 void DatabaseAccess::createUser(User& user)
 {
-	const char* sqlStatement;
+	
 	char* errMessage = nullptr;
 	std::string sqlQuery = "INSERT INTO USERS VALUES ('" + user.getName() + "'," + std::to_string(user.getId()) + ");";
-	sqlStatement = sqlQuery.c_str();
-	int res = sqlite3_exec(db, sqlStatement, nullptr, nullptr, &errMessage);
+	int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK) {
 		std::cout << "Error: " << errMessage << std::endl;
 		sqlite3_free(errMessage); // Free error message
@@ -105,11 +101,10 @@ void DatabaseAccess::createUser(User& user)
 
 void DatabaseAccess::deleteUser(const User& user)
 {
-	const char* sqlStatement;
+	
 	char* errMessage = nullptr;
 	std::string sqlQuery = "DELETE FROM USERS WHERE NAME LIKE '" + user.getName() + "' AND ID = " + std::to_string(user.getId()) + ";";
-	sqlStatement = sqlQuery.c_str();
-	int res = sqlite3_exec(db, sqlStatement, nullptr, nullptr, &errMessage);
+	int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK) {
 		std::cout << "Error: " << errMessage << std::endl;
 		sqlite3_free(errMessage); // Free error message
@@ -145,14 +140,12 @@ int DatabaseAccess::getIdFromQuery(void* data, int argc, char** argv, char** azC
 int DatabaseAccess::getAlbumIdFromName(const std::string& albumName, int userId)
 {
 	int id = 0;
-	const char* sqlStatement;
 	char* errMessage = nullptr;
 
 	std::string sqlQuery = "SELECT * FROM ALBUMS WHERE NAME LIKE '" + albumName +"' AND USER_ID = " + std::to_string(userId) + ";";
-	sqlStatement = sqlQuery.c_str();
 
 
-	int res = sqlite3_exec(db, sqlStatement, getIdFromQuery, &id, &errMessage);
+	int res = sqlite3_exec(db, sqlQuery.c_str(), getIdFromQuery, &id, &errMessage);
 	if (res != SQLITE_OK) {
 		std::cout << "Error: " << errMessage << std::endl;
 		sqlite3_free(errMessage); // Free error message
@@ -173,12 +166,10 @@ int DatabaseAccess::getPicIdFromAlbumAndPicName(const std::string& albumName, co
 {
 	int albumId = getAlbumIdFromName(albumName, userId);
 	int id = 0;
-	const char* sqlStatement;
 	char* errMessage = nullptr;
-	std::string sqlQuery = "SELECT * FROM ALBUMS WHERE NAME LIKE '" + pictureName + "'AND ALBUM_ID =" + std::to_string(albumId) ";";
+	std::string sqlQuery = "SELECT * FROM ALBUMS WHERE NAME LIKE '" + pictureName + "'AND ALBUM_ID =" + std::to_string(albumId) + ";";
 
-	sqlStatement = sqlQuery.c_str();
-	int res = sqlite3_exec(db, sqlStatement, getIdFromQuery, &id, &errMessage);
+	int res = sqlite3_exec(db, sqlQuery.c_str(), getIdFromQuery, &id, &errMessage);
 	if (res != SQLITE_OK) {
 		std::cout << "Error: " << errMessage << std::endl;
 		sqlite3_free(errMessage); // Free error message
