@@ -123,14 +123,25 @@ void DatabaseAccess::deleteUser(const User& user)
 
 
 
-
+/**
+* callback function to get the id, the id is the first value
+* params - alot
+*
+* return - int id -  the id of the wanted item 
+*/
 int DatabaseAccess::getIdFromQuery(void* data, int argc, char** argv, char** azColName)
 {
 	int* id = static_cast<int*>(data);
 	*id = std::stoi(argv[0]);
 	return 0;
 }
-
+/**
+* function to get the wanted album and then get its id 
+* @param albumName - the name of the album
+* @param userId - the id of the user
+*
+* return - int id -  the id of the wanted item
+*/
 int DatabaseAccess::getAlbumIdFromName(const std::string& albumName, int userId)
 {
 	int id = 0;
@@ -150,7 +161,14 @@ int DatabaseAccess::getAlbumIdFromName(const std::string& albumName, int userId)
 	sqlite3_free(errMessage); // Free error message after each call
 	return id;
 }
-
+/**
+* function to get the wanted pic and then get its id
+* @param albumName - the name of the album
+* @param - pictureName - the name of the picture
+* @param userId - the id of the user
+*
+* return - int id -  the id of the wanted item
+*/
 int DatabaseAccess::getPicIdFromAlbumAndPicName(const std::string& albumName, const std::string& pictureName, int userId)
 {
 	int albumId = getAlbumIdFromName(albumName, userId);

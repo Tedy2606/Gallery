@@ -65,5 +65,5 @@ private:
 
 
 
-	int getPicIdFromAlbumAndPicName(const std::string& albumName, const std::string& pictureName);
+	int getPicIdFromAlbumAndPicName(const std::string& albumName, const std::string& pictureName, int userId);
 };
