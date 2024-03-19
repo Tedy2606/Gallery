@@ -31,10 +31,13 @@ public:
 	void untagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId) override;
 
 	// user related
+	static int printUsersCallback(void* data, int argc, char** argv, char** azColName);
 	void printUsers() override;
 	void createUser(User& user) override;
 	void deleteUser(const User& user) override;
+	static int doesUserExistsCallback(void* data, int argc, char** argv, char** azColName);
 	bool doesUserExists(int userId) override;
+	static int getUserCallback(void* data, int argc, char** argv, char** azColName);
 	User getUser(int userId) override;
 
 	// user statistics
@@ -57,7 +60,7 @@ private:
 	std::list<User> m_users;
 
 	sqlite3 *db;
-	auto getAlbumIfExists(const std::string& albumName);
+	
 
 	Album createDummyAlbum(const User& user);
 	void cleanUserData(const User& userId);

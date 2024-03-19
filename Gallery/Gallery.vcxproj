@@ -91,7 +91,6 @@
     <ClInclude Include="DatabaseAccess.h" />
     <ClInclude Include="IDataAccess.h" />
     <ClInclude Include="ItemNotFoundException.h" />
-    <ClInclude Include="MemoryAccess.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="MyException.h" />
     <ClInclude Include="Picture.h" />
@@ -102,7 +101,6 @@
     <ClCompile Include="Album.cpp" />
     <ClCompile Include="AlbumManager.cpp" />
     <ClCompile Include="DatabaseAccess.cpp" />
-    <ClCompile Include="MemoryAccess.cpp" />
     <ClCompile Include="Picture.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="User.cpp" />
