@@ -13,14 +13,10 @@ bool DatabaseAccess::open()
 		std::cout << "Failed to open DB" << std::endl;
 		return -1;
 	}
-
-
 }
 
 void DatabaseAccess::close()
 {
-
-
 	sqlite3_close(db);
 }
 
