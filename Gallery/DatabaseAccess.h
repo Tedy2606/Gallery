@@ -44,6 +44,7 @@ public:
 	User getUser(int userId) override;
 
 	// user statistics
+	static int countCallback(void* data, int argc, char** argv, char** azColName);
 	int countAlbumsOwnedOfUser(const User& user) override;
 	int countAlbumsTaggedOfUser(const User& user) override;
 	int countTagsOfUser(const User& user) override;

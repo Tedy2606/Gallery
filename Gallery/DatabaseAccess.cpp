@@ -41,11 +41,6 @@ int DatabaseAccess::getPicturesCallback(void* data, int argc, char** argv, char*
 		Picture pic(std::stoi(argv[i]), argv[i + 1]);
 		pics->push_back(pic);
 	}
-
-
-
-
-
 	return 0;
 }
 
@@ -382,10 +377,6 @@ bool DatabaseAccess::doesUserExists(int userId)
 	sqlite3_free(errMessage); // Free error message after each call
 	return id;
 
-
-
-
-	return false;
 }
 
 int DatabaseAccess::getUserCallback(void* data, int argc, char** argv, char** azColName)
@@ -416,42 +407,69 @@ User DatabaseAccess::getUser(int userId)
 
 ///////////
 
-//int DatabaseAccess::countAlbumsOwnedOfUser(const User& user)
-//{
-//	return 0;
-//}
-//
-//int DatabaseAccess::countAlbumsTaggedOfUser(const User& user)
-//{
-//	return 0;
-//}
-//
-//int DatabaseAccess::countTagsOfUser(const User& user)
-//{
-//	return 0;
-//}
-//
-//float DatabaseAccess::averageTagsPerAlbumOfUser(const User& user)
-//{
-//	return 0.0f;
-//}
-//
-//User DatabaseAccess::getTopTaggedUser()
-//{
-//	User user(0, "");
-//	return user;
-//}
-//
-//Picture DatabaseAccess::getTopTaggedPicture()
-//{
-//	Picture pic(0, "");
-//	return pic;
-//}
-//
-//std::list<Picture> DatabaseAccess::getTaggedPicturesOfUser(const User& user)
-//{
-//	return std::list<Picture>();
-//}
+int DatabaseAccess::countCallback(void* data, int argc, char** argv, char** azColName)
+{
+	int* count = static_cast<int*>(data);
+	*count = std::stoi(argv[0]);
+	return 0;
+}
+
+int DatabaseAccess::countAlbumsOwnedOfUser(const User& user)
+{
+	int count = 0;
+	char* errMessage = nullptr;
+	std::string sqlQuery = "COUNT(*) FROM ALBUMS WHERE USER_ID = " + std::to_string(user.getId()) + ";";
+	int res = sqlite3_exec(db, sqlQuery.c_str(), countCallback, &count, &errMessage);
+	if (res != SQLITE_OK) {
+		std::cout << "Error: " << errMessage << std::endl;
+		sqlite3_free(errMessage); // Free error message
+	}
+	sqlite3_free(errMessage); // Free error message after each call
+	
+	return count;
+}
+
+int DatabaseAccess::countAlbumsTaggedOfUser(const User& user)
+{
+	return 0;
+}
+
+int DatabaseAccess::countTagsOfUser(const User& user)
+{
+	int count = 0;
+	char* errMessage = nullptr;
+	std::string sqlQuery = "COUNT(*) FROM TAGS WHERE USER_ID = " + std::to_string(user.getId()) + ";";
+	int res = sqlite3_exec(db, sqlQuery.c_str(), countCallback, &count, &errMessage);
+	if (res != SQLITE_OK) {
+		std::cout << "Error: " << errMessage << std::endl;
+		sqlite3_free(errMessage); // Free error message
+	}
+	sqlite3_free(errMessage); // Free error message after each call
+
+	return count;
+}
+
+float DatabaseAccess::averageTagsPerAlbumOfUser(const User& user)
+{
+	return 0.0f;
+}
+
+User DatabaseAccess::getTopTaggedUser()
+{
+	User user(0, "");
+	return user;
+}
+
+Picture DatabaseAccess::getTopTaggedPicture()
+{
+	Picture pic(0, "");
+	return pic;
+}
+
+std::list<Picture> DatabaseAccess::getTaggedPicturesOfUser(const User& user)
+{
+	return std::list<Picture>();
+}
 
 
 
