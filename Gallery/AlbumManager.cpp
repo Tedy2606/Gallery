@@ -154,7 +154,7 @@ void AlbumManager::addPictureToAlbum()
 	std::string picPath = getInputFromConsole("Enter picture path: ");
 	picture.setPath(picPath);
 
-	m_dataAccess.addPictureToAlbumByName(m_openAlbum.getName(), picture);
+	m_dataAccess.addPictureToAlbumByName(m_openAlbum.getName(), picture, m_openAlbum.getOwnerId());
 
 	std::cout << "Picture [" << picture.getId() << "] successfully added to Album [" << m_openAlbum.getName() << "]." << std::endl;
 }
@@ -169,7 +169,7 @@ void AlbumManager::removePictureFromAlbum()
 	}
 	
 	auto picture = m_openAlbum.getPicture(picName);
-	m_dataAccess.removePictureFromAlbumByName(m_openAlbum.getName(), picture.getName());
+	m_dataAccess.removePictureFromAlbumByName(m_openAlbum.getName(), picture.getName(), m_openAlbum.getOwnerId());
 	std::cout << "Picture <" << picName << "> successfully removed from Album [" << m_openAlbum.getName() << "]." << std::endl;
 }
 

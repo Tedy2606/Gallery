@@ -35,6 +35,12 @@ void DatabaseAccess::clear()
 
 int DatabaseAccess::getPicturesCallback(void* data, int argc, char** argv, char** azColName)
 {
+	std::list<Picture>* pics = static_cast<std::list<Picture>*>(data);
+	for (int i = 0; i < argc - 1; i += 5)
+	{
+		Picture pic(std::stoi(argv[i]), argv[i + 1]);
+		pics->push_back(pic);
+	}
 
 
 
@@ -59,11 +65,19 @@ std::list<Picture> DatabaseAccess::getPictures(std::string name, int owner_id)
 	}
 	sqlite3_free(errMessage); // Free error message after each call
 
-
-
-
-
 	return pics;
+}
+
+void DatabaseAccess::insertPictures(std::list<Album>& albums)
+{
+	for (auto& album : albums)
+	{
+		std::list<Picture> pics = getPictures(album.getName(), album.getOwnerId());
+		for (auto pic : pics)
+		{
+			album.addPicture(pic);
+		}
+	}
 }
 
 int DatabaseAccess::getAlbumsCallback(void* data, int argc, char** argv, char** azColName)
@@ -72,8 +86,6 @@ int DatabaseAccess::getAlbumsCallback(void* data, int argc, char** argv, char** 
 	for (int i = 0; i < argc - 1; i += 3)
 	{
 		Album album(std::stoi(argv[i + 2]), argv[i + 1], argv[i + 3]);
-		//inset pictures...
-		
 		albums->push_back(album);
 	}
 
@@ -92,6 +104,7 @@ const std::list<Album> DatabaseAccess::getAlbums()
 		return albums;
 	}
 	sqlite3_free(errMessage); // Free error message after each call
+	insertPictures(albums);
 
 	return albums;
 }
@@ -108,7 +121,7 @@ const std::list<Album> DatabaseAccess::getAlbumsOfUser(const User& user)
 		return albums;
 	}
 	sqlite3_free(errMessage); // Free error message after each call
-
+	insertPictures(albums);
 	return albums;
 }
 
@@ -174,7 +187,7 @@ Album DatabaseAccess::openAlbum(const std::string& albumName)
 		return albums.front();
 	}
 	sqlite3_free(errMessage); // Free error message after each call
-
+	insertPictures(albums);
 
 	return albums.front();
 }
@@ -209,33 +222,37 @@ void DatabaseAccess::printAlbums()
 
 }
 
-void DatabaseAccess::addPictureToAlbumByName(const std::string& albumName, const Picture& picture)
+void DatabaseAccess::addPictureToAlbumByName(const std::string& albumName, const Picture& picture, int userId)
 {
 	
-	// check if picture with that name exists...
-	
+	int album_id = getAlbumIdFromName(albumName, userId);
 
-	//
-	//int album_id = getAlbumIdFromName()
-
-	//char* errMessage = nullptr;
-	//std::string sqlQuery = "INSERT INTO PICTURES VALUES (" + std::to_string(picId) + "," + std::to_string(userId) + ");";
-	//int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
-	//if (res != SQLITE_OK) {
-	//	std::cout << "Error: " << errMessage << std::endl;
-	//	sqlite3_free(errMessage); // Free error message
-	//	return;
-	//}
-	//sqlite3_free(errMessage); // Free error message after each call
+	char* errMessage = nullptr;
+	std::string sqlQuery = "INSERT INTO PICTURES (NAME, LOCATION, CREATION_DATE, ALBUM_ID) VALUES ('" + picture.getName() + "', '" + picture.getPath() + "', '" +picture.getCreationDate() + "', " + std::to_string(album_id) + ");";
+	int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
+	if (res != SQLITE_OK) {
+		std::cout << "Error: " << errMessage << std::endl;
+		sqlite3_free(errMessage); // Free error message
+		return;
+	}
+	sqlite3_free(errMessage); // Free error message after each call
 
 
 }
 
-void DatabaseAccess::removePictureFromAlbumByName(const std::string& albumName, const std::string& pictureName)
+void DatabaseAccess::removePictureFromAlbumByName(const std::string& albumName, const std::string& pictureName, int userId)
 {
+	int album_id = getAlbumIdFromName(albumName, userId);
 
-
-
+	char* errMessage = nullptr;
+	std::string sqlQuery = "REMOVE FROM PICTURES WHERE NAME LIKE '" + pictureName + "' AND ALBUM_ID = " + std::to_string(album_id) + ";";
+	int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
+	if (res != SQLITE_OK) {
+		std::cout << "Error: " << errMessage << std::endl;
+		sqlite3_free(errMessage); // Free error message
+		return;
+	}
+	sqlite3_free(errMessage); // Free error message after each call
 
 
 }
@@ -399,42 +416,42 @@ User DatabaseAccess::getUser(int userId)
 
 ///////////
 
-int DatabaseAccess::countAlbumsOwnedOfUser(const User& user)
-{
-	return 0;
-}
-
-int DatabaseAccess::countAlbumsTaggedOfUser(const User& user)
-{
-	return 0;
-}
-
-int DatabaseAccess::countTagsOfUser(const User& user)
-{
-	return 0;
-}
-
-float DatabaseAccess::averageTagsPerAlbumOfUser(const User& user)
-{
-	return 0.0f;
-}
-
-User DatabaseAccess::getTopTaggedUser()
-{
-	User user(0, "");
-	return user;
-}
-
-Picture DatabaseAccess::getTopTaggedPicture()
-{
-	Picture pic(0, "");
-	return pic;
-}
-
-std::list<Picture> DatabaseAccess::getTaggedPicturesOfUser(const User& user)
-{
-	return std::list<Picture>();
-}
+//int DatabaseAccess::countAlbumsOwnedOfUser(const User& user)
+//{
+//	return 0;
+//}
+//
+//int DatabaseAccess::countAlbumsTaggedOfUser(const User& user)
+//{
+//	return 0;
+//}
+//
+//int DatabaseAccess::countTagsOfUser(const User& user)
+//{
+//	return 0;
+//}
+//
+//float DatabaseAccess::averageTagsPerAlbumOfUser(const User& user)
+//{
+//	return 0.0f;
+//}
+//
+//User DatabaseAccess::getTopTaggedUser()
+//{
+//	User user(0, "");
+//	return user;
+//}
+//
+//Picture DatabaseAccess::getTopTaggedPicture()
+//{
+//	Picture pic(0, "");
+//	return pic;
+//}
+//
+//std::list<Picture> DatabaseAccess::getTaggedPicturesOfUser(const User& user)
+//{
+//	return std::list<Picture>();
+//}
 
 
 

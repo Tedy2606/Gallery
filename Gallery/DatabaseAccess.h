@@ -13,6 +13,9 @@ public:
 	virtual ~DatabaseAccess() = default;
 
 	// album related
+	static int getPicturesCallback(void* data, int argc, char** argv, char** azColName);
+	std::list<Picture> getPictures(std::string name, int owner_id);
+	void insertPictures(std::list<Album>& album);
 	static int getAlbumsCallback(void* data, int argc, char** argv, char** azColName);
 	const std::list<Album> getAlbums() override;
 	const std::list<Album> getAlbumsOfUser(const User& user) override;
@@ -25,8 +28,8 @@ public:
 	void printAlbums() override;
 
 	// picture related
-	void addPictureToAlbumByName(const std::string& albumName, const Picture& picture) override;
-	void removePictureFromAlbumByName(const std::string& albumName, const std::string& pictureName) override;
+	void addPictureToAlbumByName(const std::string& albumName, const Picture& picture, int userId) override;
+	void removePictureFromAlbumByName(const std::string& albumName, const std::string& pictureName, int userId) override;
 	void tagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId) override;
 	void untagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId) override;
 
