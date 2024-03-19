@@ -13,6 +13,7 @@ public:
 	virtual ~DatabaseAccess() = default;
 
 	// album related
+	static int getAlbumsCallback(void* data, int argc, char** argv, char** azColName);
 	const std::list<Album> getAlbums() override;
 	const std::list<Album> getAlbumsOfUser(const User& user) override;
 	void createAlbum(const Album& album) override;
@@ -20,6 +21,7 @@ public:
 	bool doesAlbumExists(const std::string& albumName, int userId) override;
 	Album openAlbum(const std::string& albumName) override;
 	void closeAlbum(Album& pAlbum) override;
+	static int printAlbumsCallback(void* data, int argc, char** argv, char** azColName);
 	void printAlbums() override;
 
 	// picture related
