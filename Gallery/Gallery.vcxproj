@@ -21,7 +21,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -92,7 +92,6 @@
     <ClInclude Include="IDataAccess.h" />
     <ClInclude Include="ItemNotFoundException.h" />
     <ClInclude Include="Constants.h" />
-    <ClInclude Include="MemoryAccess.h" />
     <ClInclude Include="MyException.h" />
     <ClInclude Include="Picture.h" />
     <ClInclude Include="sqlite3.h" />
@@ -102,7 +101,6 @@
     <ClCompile Include="Album.cpp" />
     <ClCompile Include="AlbumManager.cpp" />
     <ClCompile Include="DatabaseAccess.cpp" />
-    <ClCompile Include="MemoryAccess.cpp" />
     <ClCompile Include="Picture.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="User.cpp" />
