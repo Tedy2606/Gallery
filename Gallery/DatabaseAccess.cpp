@@ -54,7 +54,7 @@ int DatabaseAccess::getPicturesCallback(void* data, int argc, char** argv, char*
 	std::list<Picture>* pics = static_cast<std::list<Picture>*>(data);
 	for (int i = 0; i < argc - 1; i += 5)
 	{
-		Picture pic(std::stoi(argv[i]), argv[i + 1]);
+		Picture pic(std::stoi(argv[i]), argv[i + 1],argv[i + 2], argv[i + 3]);
 		pics->push_back(pic);
 	}
 	return 0;
