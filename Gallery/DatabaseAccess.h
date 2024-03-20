@@ -13,6 +13,7 @@ public:
 	virtual ~DatabaseAccess() = default;
 
 	// album related
+	static int getTagsCallback(void* data, int argc, char** argv, char** azColName);
 	static int getPicturesCallback(void* data, int argc, char** argv, char** azColName);
 	std::list<Picture> getPictures(std::string name, int owner_id);
 	void insertPictures(std::list<Album>& album);
@@ -51,7 +52,10 @@ public:
 	float averageTagsPerAlbumOfUser(const User& user) override;
 
 	// queries
+	
 	User getTopTaggedUser() override;
+	static int getPictureCallback(void* data, int argc, char** argv, char** azColName);
+	Picture getPicture(int picId);
 	Picture getTopTaggedPicture() override;
 	std::list<Picture> getTaggedPicturesOfUser(const User& user) override;
 
@@ -66,8 +70,7 @@ private:
 	sqlite3 *db;
 	
 
-	Album createDummyAlbum(const User& user);
-	void cleanUserData(const User& userId);
+	
 
 	static int getIdFromQuery(void* data, int argc, char** argv, char** azColName);
 	int getAlbumIdFromName(const std::string& albumName, int userId);
