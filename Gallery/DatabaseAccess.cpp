@@ -441,7 +441,23 @@ int DatabaseAccess::countAlbumsOwnedOfUser(const User& user)
 
 int DatabaseAccess::countAlbumsTaggedOfUser(const User& user)
 {
-	return 0;
+	int count = 0;
+	
+	std::list<Album> albums = getAlbumsOfUser(user);
+	for (auto it: albums )
+	{
+		for (auto pic : it.getPictures())
+		{
+			if (pic.getTagsCount() > 0)
+			{
+				count++;
+				break;
+			}
+				
+
+		}
+	}
+	return count;
 }
 
 int DatabaseAccess::countTagsOfUser(const User& user)
@@ -461,13 +477,26 @@ int DatabaseAccess::countTagsOfUser(const User& user)
 
 float DatabaseAccess::averageTagsPerAlbumOfUser(const User& user)
 {
-	return 0.0f;
+	float count = countAlbumsOwnedOfUser(user);
+	float sum = 0;
+	std::list<Album> albums = getAlbumsOfUser(user);
+	for (auto it : albums)
+	{
+		for (auto pic : it.getPictures())
+		{
+			sum += pic.getTagsCount();
+		}
+	}
+	return sum/count;
 }
 
 User DatabaseAccess::getTopTaggedUser()
 {
 	User user(0, "");
 
+
+
+	//
 	char* errMessage = nullptr;
 	std::string sqlQuery = "SELECT TAGS.PICTURE_ID, TAGS.USER_ID FROM TAGS GROUP BY TAGS.USER_ID ORDER BY COUNT(*) DESC LIMIT 1;";
 	int res = sqlite3_exec(db, sqlQuery.c_str(), countCallback, &user, &errMessage);
