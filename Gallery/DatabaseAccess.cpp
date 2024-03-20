@@ -292,12 +292,12 @@ void DatabaseAccess::removePictureFromAlbumByName(const std::string& albumName, 
 
 }
 
-void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId)
+void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::string& pictureName, int taggerId, int userId)
 {
 	int picId = getPicIdFromAlbumAndPicName(albumName, pictureName, userId);
 
 	char* errMessage = nullptr;
-	std::string sqlQuery = "INSERT INTO TAGS VALUES (" + std::to_string(picId) + "," + std::to_string(userId) + ");";
+	std::string sqlQuery = "INSERT INTO TAGS VALUES (" + std::to_string(picId) + "," + std::to_string(taggerId) + ");";
 	int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK) {
 		std::cout << "Error: " << errMessage << std::endl;
@@ -307,13 +307,13 @@ void DatabaseAccess::tagUserInPicture(const std::string& albumName, const std::s
 	sqlite3_free(errMessage); // Free error message after each call
 }
 
-void DatabaseAccess::untagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId)
+void DatabaseAccess::untagUserInPicture(const std::string& albumName, const std::string& pictureName, int taggerId, int userId)
 {
 
 	int picId = getPicIdFromAlbumAndPicName(albumName, pictureName, userId);
 	
 	char* errMessage = nullptr;
-	std::string sqlQuery = "REMOVE FROM TAGS WHERE PICTURE_ID = " + std::to_string(picId) + " AND USER_ID =" + std::to_string(userId) + ";";
+	std::string sqlQuery = "DELETE FROM TAGS WHERE PICTURE_ID = " + std::to_string(picId) + " AND USER_ID =" + std::to_string(taggerId) + ";";
 	int res = sqlite3_exec(db, sqlQuery.c_str(), nullptr, nullptr, &errMessage);
 	if (res != SQLITE_OK) {
 		std::cout << "Error: " << errMessage << std::endl;
@@ -654,7 +654,7 @@ int DatabaseAccess::getPicIdFromAlbumAndPicName(const std::string& albumName, co
 	int albumId = getAlbumIdFromName(albumName, userId);
 	int id = 0;
 	char* errMessage = nullptr;
-	std::string sqlQuery = "SELECT * FROM PICTURES WHERE NAME LIKE '" + pictureName + "' AND ALBUM_ID =" + std::to_string(albumId) + ";";
+	std::string sqlQuery = "SELECT * FROM PICTURES WHERE NAME LIKE '" + pictureName + "' AND ALBUM_ID = " + std::to_string(albumId) + ";";
 
 	int res = sqlite3_exec(db, sqlQuery.c_str(), getIdFromQuery, &id, &errMessage);
 	if (res != SQLITE_OK) {

@@ -21,8 +21,8 @@ public:
     // picture related
 	virtual void addPictureToAlbumByName(const std::string& albumName, const Picture& picture, int userId) = 0;
 	virtual void removePictureFromAlbumByName(const std::string& albumName, const std::string& pictureName, int userId) = 0;
-	virtual void tagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId) = 0;
-	virtual void untagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId) = 0;
+	virtual void tagUserInPicture(const std::string& albumName, const std::string& pictureName, int taggerId, int userId) = 0;
+	virtual void untagUserInPicture(const std::string& albumName, const std::string& pictureName, int taggerId, int userId) = 0;
 
 	// user related
 	virtual void printUsers() =0;

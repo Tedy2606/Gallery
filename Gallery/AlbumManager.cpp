@@ -227,7 +227,8 @@ void AlbumManager::tagUserInPicture()
 	}
 	User user = m_dataAccess.getUser(userId);
 
-	m_dataAccess.tagUserInPicture(m_openAlbum.getName(), pic.getName(), user.getId());
+	
+	m_dataAccess.tagUserInPicture(m_openAlbum.getName(), pic.getName(), user.getId(), m_openAlbum.getOwnerId());
 	std::cout << "User @" << userIdStr << " successfully tagged in picture <" << pic.getName() << "> in album [" << m_openAlbum.getName() << "]" << std::endl;
 }
 
@@ -253,7 +254,7 @@ void AlbumManager::untagUserInPicture()
 		throw MyException("Error: The user was not tagged! \n");
 	}
 
-	m_dataAccess.untagUserInPicture(m_openAlbum.getName(), pic.getName(), user.getId());
+	m_dataAccess.untagUserInPicture(m_openAlbum.getName(), pic.getName(), user.getId(), m_openAlbum.getOwnerId());
 	std::cout << "User @" << userIdStr << " successfully untagged in picture <" << pic.getName() << "> in album [" << m_openAlbum.getName() << "]" << std::endl;
 
 }

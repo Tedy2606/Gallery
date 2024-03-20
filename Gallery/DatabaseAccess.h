@@ -31,8 +31,8 @@ public:
 	// picture related
 	void addPictureToAlbumByName(const std::string& albumName, const Picture& picture, int userId) override;
 	void removePictureFromAlbumByName(const std::string& albumName, const std::string& pictureName, int userId) override;
-	void tagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId) override;
-	void untagUserInPicture(const std::string& albumName, const std::string& pictureName, int userId) override;
+	void tagUserInPicture(const std::string& albumName, const std::string& pictureName, int taggerId, int userId) override;
+	void untagUserInPicture(const std::string& albumName, const std::string& pictureName, int taggerId, int userId) override;
 
 	// user related
 	static int printUsersCallback(void* data, int argc, char** argv, char** azColName);
