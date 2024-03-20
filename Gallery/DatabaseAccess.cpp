@@ -440,11 +440,7 @@ User DatabaseAccess::getUser(int userId)
 	return user;
 
 }
-///////////
 
-///////////
-
-///////////
 
 int DatabaseAccess::countCallback(void* data, int argc, char** argv, char** azColName)
 {
@@ -582,13 +578,15 @@ Picture DatabaseAccess::getTopTaggedPicture()
 
 std::list<Picture> DatabaseAccess::getTaggedPicturesOfUser(const User& user)
 {
-	std::list<Album> albums = getAlbumsOfUser(user);
+	//get the pictures that the user tagged
+	std::list<Album> albums = getAlbums();
 	std::list<Picture> pics;
 	for (auto album : albums)
 	{
 		for (auto pic : album.getPictures())
 		{
-			if (pic.getTagsCount() > 0)
+			
+			if (pic.isUserTagged(user))
 			{
 				pics.push_back(pic);
 			}
