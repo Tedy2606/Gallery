@@ -4,7 +4,8 @@
 #include "MyException.h"
 #include "AlbumNotOpenException.h"
 
-
+#include <tchar.h>
+#include <algorithm>
 AlbumManager::AlbumManager(IDataAccess& dataAccess) :
     m_dataAccess(dataAccess), m_nextPictureId(100), m_nextUserId(200)
 {
@@ -202,11 +203,60 @@ void AlbumManager::showPicture()
 	if ( !fileExistsOnDisk(pic.getPath()) ) {
 		throw MyException("Error: Can't open <" + picName+ "> since it doesnt exist on disk.\n");
 	}
+	//get user input based on choice 
+	std::string choice = getInputFromConsole("please enter how do you want to open your file \n 1: paint \n 2: ifra\n");
+	int input = std::stoi(choice);
+	if (input != 1 && input != 2) // chekc if input is correct
+	{
+		throw MyException("no choice like that ");
+	}
+	//decide which exe to use based on input 
+	std::string exeName;
+	if (input == 1)
+	{
+		exeName = "C:\\Windows\\system32\\mspaint.exe";
+	}
+	else
+	{
+		exeName = "C:\\Program Files\\IrfanView\\i_view64.exe";
+	}
+	//show the picture 
 
+	openFile(exeName, pic.getPath());
+	
 	// Bad practice!!!
 	// Can lead to privileges escalation
 	// You will replace it on WinApi Lab(bonus)
-	system(pic.getPath().c_str()); 
+	//system(pic.getPath().c_str()); 
+}
+void AlbumManager::openFile(std::string app, std::string file_path)
+{
+	
+
+	// Command line string to pass to Paint
+	CHAR commandLine[MAX_PATH * 2];
+	std::replace(file_path.begin(), file_path.end(), '/', '\\');
+	// Construct the command line string
+	sprintf_s(commandLine, MAX_PATH * 2, "\"%s\" \"%s\"", app.c_str(), file_path.c_str());
+
+	// Startup info and process info structures
+	STARTUPINFOA si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&si, sizeof(si));
+	ZeroMemory(&pi, sizeof(pi));
+	si.cb = sizeof(si);
+
+	// Create the process
+	if (!CreateProcessA(NULL, commandLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+		return;
+	}
+
+	// Wait for the process to finish
+	WaitForSingleObject(pi.hProcess, INFINITE);
+
+	// Close process and thread handles
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
 }
 
 void AlbumManager::tagUserInPicture()
@@ -411,6 +461,7 @@ bool AlbumManager::isCurrentAlbumSet() const
 {
     return !m_currentAlbumName.empty();
 }
+
 
 const std::vector<struct CommandGroup> AlbumManager::m_prompts  = {
 	{
