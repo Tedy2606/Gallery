@@ -204,30 +204,19 @@ void AlbumManager::showPicture()
 		throw MyException("Error: Can't open <" + picName+ "> since it doesnt exist on disk.\n");
 	}
 	//get user input based on choice 
-	std::string choice = getInputFromConsole("please enter how do you want to open your file \n 1: paint \n 2: ifra\n");
+	std::string choice = getInputFromConsole("please enter how do you want to open your file \n 1: paint \n 2: HxD editor\n");
 	int input = std::stoi(choice);
 	if (input != 1 && input != 2) // chekc if input is correct
 	{
 		throw MyException("no choice like that ");
 	}
 	//decide which exe to use based on input 
-	std::string exeName;
-	if (input == 1)
-	{
-		exeName = "C:\\Windows\\system32\\mspaint.exe";
-	}
-	else
-	{
-		exeName = "C:\\Program Files\\IrfanView\\i_view64.exe";
-	}
+	std::string exeName[] = { "C:\\Windows\\system32\\mspaint.exe" , "C:\\Program Files\\HxD\\HxD.exe" };
 	//show the picture 
 
-	openFile(exeName, pic.getPath());
+	openFile(exeName[input - 1], pic.getPath());
 	
-	// Bad practice!!!
-	// Can lead to privileges escalation
-	// You will replace it on WinApi Lab(bonus)
-	//system(pic.getPath().c_str()); 
+	
 }
 PROCESS_INFORMATION pi = {0};
 void AlbumManager::openFile(std::string app, std::string file_path)
@@ -253,7 +242,7 @@ void AlbumManager::openFile(std::string app, std::string file_path)
 		DWORD err = GetLastError();
 		return;
 	}
-
+	//handle the closing with control c 
 	SetConsoleCtrlHandler(ctrlHandler, true);
 
 	// Wait for the process to finish
@@ -269,6 +258,7 @@ BOOL WINAPI AlbumManager::ctrlHandler(DWORD fdwCtrlType)
 		// Handle the CTRL-C signal. 
 	case CTRL_C_EVENT:
 		printf("Ctrl-C event\n\n");
+		// end the process
 		TerminateProcess(pi.hProcess, 0);
 		return TRUE;
 	default:

@@ -57,8 +57,17 @@ private:
 	bool fileExistsOnDisk(const std::string& filename);
 	void refreshOpenAlbum();
     bool isCurrentAlbumSet() const;
+
+	//function that catches an event where ctrl c and terminates the app 
 	static BOOL WINAPI ctrlHandler(DWORD fdwCtrlType);
 	//open file on app
+
+	/**
+	* function opens the file in the wanted application (and waits for ctrl c to close it )
+	* @param app - string that is the path to the wanted application
+	* @param file_path - path to the picture 
+	* 
+	*/
 	void openFile(std::string app, std::string file_path);
 
 
