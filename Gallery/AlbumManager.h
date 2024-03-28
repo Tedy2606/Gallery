@@ -57,7 +57,7 @@ private:
 	bool fileExistsOnDisk(const std::string& filename);
 	void refreshOpenAlbum();
     bool isCurrentAlbumSet() const;
-	BOOL WINAPI ctrlHandler(DWORD fdwCtrlType, PROCESS_INFORMATION& pi);
+	static BOOL WINAPI ctrlHandler(DWORD fdwCtrlType);
 	//open file on app
 	void openFile(std::string app, std::string file_path);
 

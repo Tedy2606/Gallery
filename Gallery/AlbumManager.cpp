@@ -229,6 +229,7 @@ void AlbumManager::showPicture()
 	// You will replace it on WinApi Lab(bonus)
 	//system(pic.getPath().c_str()); 
 }
+PROCESS_INFORMATION pi = {0};
 void AlbumManager::openFile(std::string app, std::string file_path)
 {
 	
@@ -240,25 +241,40 @@ void AlbumManager::openFile(std::string app, std::string file_path)
 	sprintf_s(commandLine, MAX_PATH * 2, "\"%s\" \"%s\"", app.c_str(), file_path.c_str());
 
 	// Startup info and process info structures
-	STARTUPINFOA si;
-	PROCESS_INFORMATION pi;
-	ZeroMemory(&si, sizeof(si));
-	ZeroMemory(&pi, sizeof(pi));
-	si.cb = sizeof(si);
-
+	STARTUPINFOA si = { 0 };
+	
+	si.cb = sizeof(STARTUPINFO);
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	si.wShowWindow = true;
+	
 	// Create the process
-	if (!CreateProcessA(NULL, commandLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+	BOOL RET = CreateProcessA(NULL, commandLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+	if (!RET) {
+		DWORD err = GetLastError();
 		return;
 	}
 
+	SetConsoleCtrlHandler(ctrlHandler, true);
+
 	// Wait for the process to finish
 	WaitForSingleObject(pi.hProcess, INFINITE);
-
 	// Close process and thread handles
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
 }
-
+BOOL WINAPI AlbumManager::ctrlHandler(DWORD fdwCtrlType)
+{
+	switch (fdwCtrlType)
+	{
+		// Handle the CTRL-C signal. 
+	case CTRL_C_EVENT:
+		printf("Ctrl-C event\n\n");
+		TerminateProcess(pi.hProcess, 0);
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
 void AlbumManager::tagUserInPicture()
 {
 	refreshOpenAlbum();
