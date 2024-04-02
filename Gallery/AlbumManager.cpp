@@ -4,7 +4,8 @@
 #include "MyException.h"
 #include "AlbumNotOpenException.h"
 
-
+#include <tchar.h>
+#include <algorithm>
 AlbumManager::AlbumManager(IDataAccess& dataAccess) :
     m_dataAccess(dataAccess), m_nextPictureId(100), m_nextUserId(200)
 {
@@ -202,13 +203,68 @@ void AlbumManager::showPicture()
 	if ( !fileExistsOnDisk(pic.getPath()) ) {
 		throw MyException("Error: Can't open <" + picName+ "> since it doesnt exist on disk.\n");
 	}
+	//get user input based on choice 
+	std::string choice = getInputFromConsole("please enter how do you want to open your file \n 1: paint \n 2: HxD editor\n");
+	int input = std::stoi(choice);
+	if (input != 1 && input != 2) // chekc if input is correct
+	{
+		throw MyException("no choice like that ");
+	}
+	//decide which exe to use based on input 
+	std::string exeName[] = { "C:\\Windows\\system32\\mspaint.exe" , "C:\\Program Files\\HxD\\HxD.exe" };
+	//show the picture 
 
-	// Bad practice!!!
-	// Can lead to privileges escalation
-	// You will replace it on WinApi Lab(bonus)
-	system(pic.getPath().c_str()); 
+	openFile(exeName[input - 1], pic.getPath());
+	
+	
 }
+PROCESS_INFORMATION pi = {0};
+void AlbumManager::openFile(std::string app, std::string file_path)
+{
+	
 
+	// Command line string to pass to Paint
+	CHAR commandLine[MAX_PATH * 2];
+	std::replace(file_path.begin(), file_path.end(), '/', '\\');
+	// Construct the command line string
+	sprintf_s(commandLine, MAX_PATH * 2, "\"%s\" \"%s\"", app.c_str(), file_path.c_str());
+
+	// Startup info and process info structures
+	STARTUPINFOA si = { 0 };
+	
+	si.cb = sizeof(STARTUPINFO);
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	si.wShowWindow = true;
+	
+	// Create the process
+	BOOL RET = CreateProcessA(NULL, commandLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+	if (!RET) {
+		DWORD err = GetLastError();
+		return;
+	}
+	//handle the closing with control c 
+	SetConsoleCtrlHandler(ctrlHandler, true);
+
+	// Wait for the process to finish
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	// Close process and thread handles
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+}
+BOOL WINAPI AlbumManager::ctrlHandler(DWORD fdwCtrlType)
+{
+	switch (fdwCtrlType)
+	{
+		// Handle the CTRL-C signal. 
+	case CTRL_C_EVENT:
+		printf("Ctrl-C event\n\n");
+		// end the process
+		TerminateProcess(pi.hProcess, 0);
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
 void AlbumManager::tagUserInPicture()
 {
 	refreshOpenAlbum();
@@ -423,6 +479,7 @@ bool AlbumManager::isCurrentAlbumSet() const
 {
     return !m_currentAlbumName.empty();
 }
+
 
 const std::vector<struct CommandGroup> AlbumManager::m_prompts  = {
 	{
